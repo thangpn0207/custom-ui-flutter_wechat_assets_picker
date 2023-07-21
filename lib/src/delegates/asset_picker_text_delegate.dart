@@ -24,7 +24,7 @@ const List<AssetPickerTextDelegate> assetPickerTextDelegates =
 /// Obtain the text delegate from the given locale.
 AssetPickerTextDelegate assetPickerTextDelegateFromLocale(Locale? locale) {
   if (locale == null) {
-    return const AssetPickerTextDelegate();
+    return const EnglishAssetPickerTextDelegate();
   }
   final String languageCode = locale.languageCode.toLowerCase();
   for (final AssetPickerTextDelegate delegate in assetPickerTextDelegates) {
@@ -32,7 +32,7 @@ AssetPickerTextDelegate assetPickerTextDelegateFromLocale(Locale? locale) {
       return delegate;
     }
   }
-  return const AssetPickerTextDelegate();
+  return const EnglishAssetPickerTextDelegate();
 }
 
 /// Text delegate that controls text in widgets.
@@ -106,10 +106,10 @@ class AssetPickerTextDelegate {
   String durationIndicatorBuilder(Duration duration) {
     const String separator = ':';
     final String minute = duration.inMinutes.toString().padLeft(2, '0');
-    final String second =
-        (duration - Duration(minutes: duration.inMinutes)).inSeconds
-            .toString()
-            .padLeft(2, '0');
+    final String second = (duration - Duration(minutes: duration.inMinutes))
+        .inSeconds
+        .toString()
+        .padLeft(2, '0');
     return '$minute$separator$second';
   }
 
