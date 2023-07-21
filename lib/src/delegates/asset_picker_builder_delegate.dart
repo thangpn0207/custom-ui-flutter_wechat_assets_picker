@@ -1496,7 +1496,7 @@ class DefaultAssetPickerBuilderDelegate
           child: ScaleText(
             p.isSelectedNotEmpty && !isSingleAssetMode
                 ? '${textDelegate.confirm}'
-                    ' (${p.selectedAssets.length}/${p.maxAssets})'
+                    ' (${p.selectedAssets.length})'
                 : textDelegate.confirm,
             style: TextStyle(
               color: p.isSelectedNotEmpty
@@ -1507,7 +1507,7 @@ class DefaultAssetPickerBuilderDelegate
             ),
             semanticsLabel: p.isSelectedNotEmpty && !isSingleAssetMode
                 ? '${semanticsTextDelegate.confirm}'
-                    ' (${p.selectedAssets.length}/${p.maxAssets})'
+                    ' (${p.selectedAssets.length})'
                 : semanticsTextDelegate.confirm,
           ),
         );

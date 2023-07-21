@@ -164,9 +164,6 @@ class PickMethod {
               AssetPathEntity? path,
               int length,
             ) {
-              if (path?.isAll != true) {
-                return null;
-              }
               return Semantics(
                 label: textDelegate.sActionUseCameraHint,
                 button: true,

@@ -791,7 +791,7 @@ class FileAssetPickerBuilder
             child: Text(
               provider.isSelectedNotEmpty && !isSingleAssetMode
                   ? '${textDelegate.confirm}'
-                      '(${provider.selectedAssets.length}/${provider.maxAssets})'
+                      '(${provider.selectedAssets.length})'
                   : textDelegate.confirm,
               style: TextStyle(
                 color: provider.isSelectedNotEmpty
@@ -1480,9 +1480,7 @@ class FileAssetPickerViewerBuilderDelegate
               () {
                 if (provider.isSelectedNotEmpty) {
                   return '${textDelegate.confirm}'
-                      '(${provider.currentlySelectedAssets.length}'
-                      '/'
-                      '${selectorProvider!.maxAssets})';
+                      '(${provider.currentlySelectedAssets.length})';
                 }
                 return textDelegate.confirm;
               }(),

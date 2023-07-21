@@ -399,7 +399,7 @@ class MultiTabAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
           child: Text(
             p.isSelectedNotEmpty && !isSingleAssetMode
                 ? '${textDelegate.confirm}'
-                    ' (${p.selectedAssets.length}/${p.maxAssets})'
+                    ' (${p.selectedAssets.length})'
                 : textDelegate.confirm,
             style: TextStyle(
               color: p.isSelectedNotEmpty
