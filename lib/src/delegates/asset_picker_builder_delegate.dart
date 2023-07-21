@@ -40,6 +40,7 @@ import '../widget/scale_text.dart';
 abstract class AssetPickerBuilderDelegate<Asset, Path> {
   AssetPickerBuilderDelegate({
     required this.initialPermission,
+    this.onBackHandler,
     this.gridCount = 4,
     this.pickerTheme,
     this.specialItemPosition = SpecialItemPosition.none,
@@ -124,6 +125,8 @@ abstract class AssetPickerBuilderDelegate<Asset, Path> {
 
   /// {@macro wechat_assets_picker.PathNameBuilder}
   final PathNameBuilder<AssetPathEntity>? pathNameBuilder;
+
+  final VoidCallback? onBackHandler;
 
   /// [ThemeData] for the picker.
   /// 选择器使用的主题
@@ -551,7 +554,7 @@ abstract class AssetPickerBuilderDelegate<Asset, Path> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: IconButton(
-        onPressed: Navigator.of(context).maybePop,
+        onPressed: onBackHandler ?? Navigator.of(context).maybePop,
         tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         icon: const Icon(Icons.close),
       ),
@@ -669,6 +672,7 @@ class DefaultAssetPickerBuilderDelegate
     super.themeColor,
     super.textDelegate,
     super.locale,
+    super.onBackHandler,
     this.gridThumbnailSize = defaultAssetGridPreviewSize,
     this.previewThumbnailSize,
     this.specialPickerType,

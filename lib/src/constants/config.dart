@@ -13,6 +13,7 @@ import 'enums.dart';
 
 class AssetPickerConfig {
   const AssetPickerConfig({
+    this.onHandlerBack,
     this.selectedAssets,
     this.maxAssets = defaultMaxAssetsCount,
     this.pageSize = defaultAssetsPerPage,
@@ -191,4 +192,6 @@ class AssetPickerConfig {
 
   /// {@macro wechat_assets_picker.PathNameBuilder}
   final PathNameBuilder<AssetPathEntity>? pathNameBuilder;
+
+  final VoidCallback? onHandlerBack;
 }
