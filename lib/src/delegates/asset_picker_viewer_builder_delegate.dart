@@ -816,9 +816,7 @@ class DefaultAssetPickerViewerBuilderDelegate
             }
             if (provider!.isSelectedNotEmpty) {
               return '${textDelegate.confirm}'
-                  ' (${provider.currentlySelectedAssets.length}'
-                  '/'
-                  '${selectorProvider!.maxAssets})';
+                  '(${provider.currentlySelectedAssets.length})';
             }
             return textDelegate.confirm;
           }
@@ -830,7 +828,7 @@ class DefaultAssetPickerViewerBuilderDelegate
           return MaterialButton(
             minWidth:
                 (isWeChatMoment && hasVideo) || provider!.isSelectedNotEmpty
-                    ? 48
+                    ? 55
                     : 20,
             height: 32,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -845,7 +843,7 @@ class DefaultAssetPickerViewerBuilderDelegate
               buildText(),
               style: TextStyle(
                 color: themeData.textTheme.bodyLarge?.color,
-                fontSize: 17,
+                fontSize: 14,
                 fontWeight: FontWeight.normal,
               ),
               overflow: TextOverflow.fade,
@@ -856,9 +854,7 @@ class DefaultAssetPickerViewerBuilderDelegate
                 }
                 if (provider!.isSelectedNotEmpty) {
                   return '${semanticsTextDelegate.confirm}'
-                      ' (${provider.currentlySelectedAssets.length}'
-                      '/'
-                      '${selectorProvider!.maxAssets})';
+                      '(${provider.currentlySelectedAssets.length})';
                 }
                 return semanticsTextDelegate.confirm;
               }(),
