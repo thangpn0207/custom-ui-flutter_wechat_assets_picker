@@ -73,6 +73,7 @@ See the [Migration Guide][] to learn how to migrate between breaking changes.
 
 ## Features ✨
 
+- ♿ Complete a11y support with _TalkBack_ and _VoiceOver_
 - ♻️ Fully customizable with delegates override
 - 🎏 Fully customizable theme based on `ThemeData`
 - 💚 Completely WeChat style (even more)
@@ -106,10 +107,10 @@ See the [Migration Guide][] to learn how to migrate between breaking changes.
 
 ## Screenshots 📸
 
-| ![1](https://pic.alexv525.com/2021-07-05-picker_1.jpg)   | ![2](https://pic.alexv525.com/2021-07-05-picker_2.jpg)   | ![3](https://pic.alexv525.com/2021-07-05-picker_3.jpg)   |
+| ![1](screenshots/README_1.webp)                          | ![2](screenshots/README_2.webp)                          | ![3](screenshots/README_3.webp)                          |
 |----------------------------------------------------------|----------------------------------------------------------|----------------------------------------------------------|
-| ![4](https://pic.alexv525.com/2021-07-05-picker_4.jpg)   | ![5](https://pic.alexv525.com/2021-07-05-picker_5.jpg)   | ![6](https://pic.alexv525.com/2021-07-05-picker_6.jpg)   |
-| ![7](https://pic.alexv525.com/2021-07-06-picker_7.jpg)   | ![8](https://pic.alexv525.com/2021-07-05-picker_8.jpg)   | ![9](https://pic.alexv525.com/2021-07-05-picker_9-1.jpg) |
+| ![4](screenshots/README_4.webp)                          | ![5](screenshots/README_5.webp)                          | ![6](screenshots/README_6.webp)                          |
+| ![7](screenshots/README_7.webp)                          | ![8](screenshots/README_8.webp)                          | ![9](screenshots/README_9.webp)                          |
 | ![10](https://pic.alexv525.com/2021-07-05-picker_10.png) | ![10](https://pic.alexv525.com/2021-07-05-picker_11.png) | ![12](https://pic.alexv525.com/2021-07-05-picker_12.png) |
 
 ## READ THIS FIRST ‼️
@@ -139,12 +140,13 @@ before you have any questions.
 The package only guarantees to be working on **the stable version of Flutter**.
 We won't update it in real-time to align with other channels of Flutter.
 
-|        | 3.0.0 | 3.3.0 | 3.7.0 | 3.10.0 |
-|--------|:-----:|:-----:|:-----:|:------:|
-| 8.5.0+ |   ❌   |   ❌   |   ❌   |   ✅    |
-| 8.4.0+ |   ❌   |   ❌   |   ✅   |   ❌    |
-| 8.0.0+ |   ✅   |   ✅   |   ❌   |   ❌    |
-| 7.3.0+ |   ✅   |   ✅   |   ❌   |   ❌    |
+|        | 3.0 | 3.3 | 3.7 | 3.10 | **3.13** |
+|--------|:---:|:---:|:---:|:----:|:--------:|
+| 8.7.0+ |  ❌  |  ❌  |  ❌  |  ❌   |    ✅     |
+| 8.5.0+ |  ❌  |  ❌  |  ❌  |  ✅   |    ❌     |
+| 8.4.0+ |  ❌  |  ❌  |  ✅  |  ❌   |    ❌     |
+| 8.0.0+ |  ✅  |  ✅  |  ❌  |  ❌   |    ❌     |
+| 7.3.0+ |  ✅  |  ✅  |  ❌  |  ❌   |    ❌     |
 
 If you got a `resolve conflict` error when running `flutter pub get`,
 please use `dependency_overrides` to fix it.
@@ -251,6 +253,7 @@ Embedded text delegates languages are:
 * مة العربية
 * Délégué
 * Tiếng Việt
+* Türkçe Yerelleştirme
 
 If you want to use a custom/fixed text delegate, pass it through the
 `AssetPickerConfig.textDelegate`.
@@ -446,9 +449,10 @@ You can extend them and use your own
 type with generic type `<A: Asset, P: Path>`,
 then implement abstract methods.
 
-We've defined a picker that integrates with `Directory` and `File`
-(completely out of the `photo_manager` scope),
-and a picker with multiple tabs switching in the "Custom" page.
+To know about how to fully customize themes, widgets or layouts.
+See how to customize delegates in the custom pickers page in the
+[example](example/lib/customs/pickers).
+
 You can submit PRs to create your own implementation
 if you found your implementation might be useful for others.
 See [Contribute custom implementations][] for more details.
@@ -518,7 +522,7 @@ Many thanks to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://blog.alexv525.com"><img src="https://avatars1.githubusercontent.com/u/15884415?v=4?s=50" width="50px;" alt="Alex Li"/><br /><sub><b>Alex Li</b></sub></a><br /><a href="https://github.com/fluttercandies/flutter_wechat_assets_picker/commits?author=AlexV525" title="Code">💻</a> <a href="#design-AlexV525" title="Design">🎨</a> <a href="https://github.com/fluttercandies/flutter_wechat_assets_picker/commits?author=AlexV525" title="Documentation">📖</a> <a href="#example-AlexV525" title="Examples">💡</a> <a href="#ideas-AlexV525" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-AlexV525" title="Maintenance">🚧</a> <a href="#question-AlexV525" title="Answering Questions">💬</a> <a href="https://github.com/fluttercandies/flutter_wechat_assets_picker/pulls?q=is%3Apr+reviewed-by%3AAlexV525" title="Reviewed Pull Requests">👀</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://blog.alexv525.com"><img src="https://avatars1.githubusercontent.com/u/15884415?v=4?s=50" width="50px;" alt="Alex Li"/><br /><sub><b>Alex Li</b></sub></a><br /><a href="https://github.com/fluttercandies/flutter_wechat_assets_picker/commits?author=AlexV525" title="Code">💻</a> <a href="#design-AlexV525" title="Design">🎨</a> <a href="https://github.com/fluttercandies/flutter_wechat_assets_picker/commits?author=AlexV525" title="Documentation">📖</a> <a href="#example-AlexV525" title="Examples">💡</a> <a href="#ideas-AlexV525" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-AlexV525" title="Maintenance">🚧</a> <a href="#question-AlexV525" title="Answering Questions">💬</a> <a href="https://github.com/fluttercandies/flutter_wechat_assets_picker/pulls?q=is%3Apr+reviewed-by%3AAlexV525" title="Reviewed Pull Requests">👀</a> <a href="#a11y-AlexV525" title="Accessibility">️️️️♿️</a> <a href="#translation-AlexV525" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.kikt.top"><img src="https://avatars0.githubusercontent.com/u/14145407?v=4?s=50" width="50px;" alt="Caijinglong"/><br /><sub><b>Caijinglong</b></sub></a><br /><a href="#example-CaiJingLong" title="Examples">💡</a> <a href="#ideas-CaiJingLong" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SchnMar"><img src="https://avatars3.githubusercontent.com/u/12902321?v=4?s=50" width="50px;" alt="Marcel Schneider"/><br /><sub><b>Marcel Schneider</b></sub></a><br /><a href="https://github.com/fluttercandies/flutter_wechat_assets_picker/issues?q=author%3ASchnMar" title="Bug reports">🐛</a> <a href="https://github.com/fluttercandies/flutter_wechat_assets_picker/commits?author=SchnMar" title="Code">💻</a> <a href="#ideas-SchnMar" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ganlanshu0211"><img src="https://avatars0.githubusercontent.com/u/9670379?v=4?s=50" width="50px;" alt="ganlanshu0211"/><br /><sub><b>ganlanshu0211</b></sub></a><br /><a href="https://github.com/fluttercandies/flutter_wechat_assets_picker/issues?q=author%3Aganlanshu0211" title="Bug reports">🐛</a> <a href="#ideas-ganlanshu0211" title="Ideas, Planning, & Feedback">🤔</a></td>
@@ -547,6 +551,7 @@ Many thanks to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/dddrop"><img src="https://avatars.githubusercontent.com/u/5361175?v=4?s=50" width="50px;" alt="dddrop"/><br /><sub><b>dddrop</b></sub></a><br /><a href="https://github.com/fluttercandies/flutter_wechat_assets_picker/commits?author=dddrop" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/loinp"><img src="https://avatars.githubusercontent.com/u/34020090?v=4?s=50" width="50px;" alt="Nguyen Phuc Loi"/><br /><sub><b>Nguyen Phuc Loi</b></sub></a><br /><a href="#translation-nploi" title="Translation">🌍</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://sqlturk.wordpress.com/"><img src="https://avatars.githubusercontent.com/u/12383547?v=4?s=50" width="50px;" alt="Cevheri"/><br /><sub><b>Cevheri</b></sub></a><br /><a href="#translation-cevheri" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>

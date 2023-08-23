@@ -129,6 +129,7 @@ class _MultiTabAssetPickerState extends State<MultiTabAssetPicker> {
   Widget selectedAssetsListView(BuildContext context) {
     return Expanded(
       child: ListView.builder(
+        shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         scrollDirection: Axis.horizontal,
@@ -295,7 +296,7 @@ class MultiTabAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
           child: Container(
             height: appBarItemHeight,
             constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.5,
+              maxWidth: MediaQuery.sizeOf(context).width * 0.5,
             ),
             padding: const EdgeInsetsDirectional.only(start: 12, end: 6),
             decoration: BoxDecoration(
@@ -359,19 +360,12 @@ class MultiTabAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
       builder: (_, __) => Selector<TabController, int>(
         selector: (_, TabController p) => p.index,
         builder: (_, int index, __) {
-          final DefaultAssetPickerProvider pickerProvider;
-          switch (index) {
-            case 1:
-              pickerProvider = videosProvider;
-              break;
-            case 2:
-              pickerProvider = imagesProvider;
-              break;
-            default:
-              pickerProvider = provider;
-          }
           return ChangeNotifierProvider<DefaultAssetPickerProvider>.value(
-            value: pickerProvider,
+            value: switch (index) {
+              1 => videosProvider,
+              2 => imagesProvider,
+              _ => provider,
+            },
             builder: (BuildContext c, _) => selector(c),
           );
         },
@@ -417,19 +411,12 @@ class MultiTabAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
       builder: (_, __) => Selector<TabController, int>(
         selector: (_, TabController p) => p.index,
         builder: (_, int index, __) {
-          final DefaultAssetPickerProvider pickerProvider;
-          switch (index) {
-            case 1:
-              pickerProvider = videosProvider;
-              break;
-            case 2:
-              pickerProvider = imagesProvider;
-              break;
-            default:
-              pickerProvider = provider;
-          }
           return ChangeNotifierProvider<DefaultAssetPickerProvider>.value(
-            value: pickerProvider,
+            value: switch (index) {
+              1 => videosProvider,
+              2 => imagesProvider,
+              _ => provider,
+            },
             builder: (_, __) => button,
           );
         },
@@ -439,17 +426,15 @@ class MultiTabAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
 
   @override
   AssetPickerAppBar appBar(BuildContext context) {
-    return AssetPickerAppBar(
+    final AssetPickerAppBar appBar = AssetPickerAppBar(
       backgroundColor: theme.appBarTheme.backgroundColor,
-      centerTitle: isAppleOS,
+      centerTitle: true,
       title: Semantics(
         onTapHint: textDelegate.sActionSwitchPathLabel,
         child: pathEntitySelector(context),
       ),
       leading: backButton(context),
-      actions: <Widget>[if (!isAppleOS) confirmButton(context)],
-      actionsPadding: const EdgeInsetsDirectional.only(end: 14),
-      blurRadius: isAppleOS ? appleOSBlurRadius : 0,
+      blurRadius: isAppleOS(context) ? appleOSBlurRadius : 0,
       bottom: TabBar(
         controller: _tabController,
         tabs: <Tab>[
@@ -458,6 +443,47 @@ class MultiTabAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
           Tab(text: context.l10n.customPickerMultiTabTab3),
         ],
       ),
+    );
+    appBarPreferredSize ??= appBar.preferredSize;
+    return appBar;
+  }
+
+  @override
+  Widget appleOSLayout(BuildContext context) {
+    Widget layout(BuildContext context) {
+      return Stack(
+        children: <Widget>[
+          TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              ChangeNotifierProvider<DefaultAssetPickerProvider>.value(
+                value: provider,
+                builder: (BuildContext context, _) => _buildGrid(context),
+              ),
+              ChangeNotifierProvider<DefaultAssetPickerProvider>.value(
+                value: videosProvider,
+                builder: (BuildContext context, _) => _buildGrid(context),
+              ),
+              ChangeNotifierProvider<DefaultAssetPickerProvider>.value(
+                value: imagesProvider,
+                builder: (BuildContext context, _) => _buildGrid(context),
+              ),
+            ],
+          ),
+          appBar(context),
+        ],
+      );
+    }
+
+    return ValueListenableBuilder<bool>(
+      valueListenable: permissionOverlayDisplay,
+      builder: (_, bool value, Widget? child) {
+        if (value) {
+          return ExcludeSemantics(child: child);
+        }
+        return child!;
+      },
+      child: layout(context),
     );
   }
 
@@ -484,9 +510,6 @@ class MultiTabAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
       ),
     );
   }
-
-  @override
-  Widget appleOSLayout(BuildContext context) => androidLayout(context);
 
   Widget _buildGrid(BuildContext context) {
     return Consumer<DefaultAssetPickerProvider>(
@@ -522,14 +545,19 @@ class MultiTabAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
       value: overlayStyle,
       child: Theme(
         data: theme,
-        child: Material(
-          color: theme.canvasColor,
-          child: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              if (isAppleOS) appleOSLayout(context) else androidLayout(context),
-              if (Platform.isIOS) iOSPermissionOverlay(context),
-            ],
+        child: Builder(
+          builder: (BuildContext context) => Material(
+            color: theme.canvasColor,
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                if (isAppleOS(context))
+                  appleOSLayout(context)
+                else
+                  androidLayout(context),
+                if (Platform.isIOS) iOSPermissionOverlay(context),
+              ],
+            ),
           ),
         ),
       ),

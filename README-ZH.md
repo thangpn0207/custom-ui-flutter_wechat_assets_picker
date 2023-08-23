@@ -69,6 +69,7 @@ Language: [English](README.md) | 中文
 
 ## 特性 ✨
 
+- ♿ 完整的无障碍支持，包括 **TalkBack** 和 **VoiceOver**
 - ♻️ 支持基于代理重载的全量自定义
 - 🎏 完全可自定义的基于 `ThemeData` 的主题
 - 💚 复刻微信风格（甚至优化了更多的细节）
@@ -101,10 +102,10 @@ Language: [English](README.md) | 中文
 
 ## 截图 📸
 
-| ![1](https://pic.alexv525.com/2021-07-05-picker_1.jpg)   | ![2](https://pic.alexv525.com/2021-07-05-picker_2.jpg)   | ![3](https://pic.alexv525.com/2021-07-05-picker_3.jpg)   |
+| ![1](screenshots/README_1.webp)                          | ![2](screenshots/README_2.webp)                          | ![3](screenshots/README_3.webp)                          |
 |----------------------------------------------------------|----------------------------------------------------------|----------------------------------------------------------|
-| ![4](https://pic.alexv525.com/2021-07-05-picker_4.jpg)   | ![5](https://pic.alexv525.com/2021-07-05-picker_5.jpg)   | ![6](https://pic.alexv525.com/2021-07-05-picker_6.jpg)   |
-| ![7](https://pic.alexv525.com/2021-07-06-picker_7.jpg)   | ![8](https://pic.alexv525.com/2021-07-05-picker_8.jpg)   | ![9](https://pic.alexv525.com/2021-07-05-picker_9-1.jpg) |
+| ![4](screenshots/README_4.webp)                          | ![5](screenshots/README_5.webp)                          | ![6](screenshots/README_6.webp)                          |
+| ![7](screenshots/README_7.webp)                          | ![8](screenshots/README_8.webp)                          | ![9](screenshots/README_9.webp)                          |
 | ![10](https://pic.alexv525.com/2021-07-05-picker_10.png) | ![10](https://pic.alexv525.com/2021-07-05-picker_11.png) | ![12](https://pic.alexv525.com/2021-07-05-picker_12.png) |
 
 ## 开始前的注意事项 ‼️
@@ -132,12 +133,13 @@ Language: [English](README.md) | 中文
 该插件仅保证能与 **stable 渠道的 Flutter SDK** 配合使用。
 我们不会为其他渠道的 Flutter SDK 做实时支持。
 
-|        | 3.0.0 | 3.3.0 | 3.7.0 | 3.10.0 |
-|--------|:-----:|:-----:|:-----:|:------:|
-| 8.5.0+ |   ❌   |   ❌   |   ❌   |   ✅    |
-| 8.4.0+ |   ❌   |   ❌   |   ✅   |   ❌    |
-| 8.0.0+ |   ✅   |   ✅   |   ❌   |   ❌    |
-| 7.3.0+ |   ✅   |   ✅   |   ❌   |   ❌    |
+|        | 3.0 | 3.3 | 3.7 | 3.10 | **3.13** |
+|--------|:---:|:---:|:---:|:----:|:--------:|
+| 8.7.0+ |  ❌  |  ❌  |  ❌  |  ❌   |    ✅     |
+| 8.5.0+ |  ❌  |  ❌  |  ❌  |  ✅   |    ❌     |
+| 8.4.0+ |  ❌  |  ❌  |  ✅  |  ❌   |    ❌     |
+| 8.0.0+ |  ✅  |  ✅  |  ❌  |  ❌   |    ❌     |
+| 7.3.0+ |  ✅  |  ✅  |  ❌  |  ❌   |    ❌     |
 
 如果在 `flutter pub get` 时遇到了 `resolve conflict` 失败问题，
 请使用 `dependency_overrides` 解决。
@@ -241,6 +243,7 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 * مة العربية
 * Délégué
 * Tiếng Việt
+* Türkçe Yerelleştirme
 
 如果你想使用自定义或固定的文字实现，请通过
 `AssetPickerConfig.textDelegate` 传递调用。
@@ -431,10 +434,9 @@ Future<dio.MultipartFile> multipartFileFromAssetEntity(AssetEntity entity) async
 更多用法请查看示例中的 `Custom` 页面，
 该页面包含一个以 `<File, Directory>` 为类型基础的选择器。
 
-你可以在「Custom」页面尝试自定义的选择器。
-目前我们提供了一个基于 `Directory` 和 `File`
-（与 `photo_manager` 完全无关）实现的选择器，
-以及一个多 Tab 页切换的选择器。
+想要了解如何完全自定义主题、widget 和布局，前往 [示例](example/lib/customs/pickers)
+查看已有的自定义选择器的实现。
+
 如果你觉得你的实现有价值或能帮助到其他人，欢迎以 PR 的形式进行提交。
 更多细节请阅读 [贡献自定义实现][]。
 
