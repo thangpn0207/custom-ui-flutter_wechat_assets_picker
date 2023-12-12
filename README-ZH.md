@@ -18,10 +18,7 @@ that can be found in the LICENSE file. -->
 
 Language: [English](README.md) | 中文
 
-基于 **微信 UI** 的 Flutter 图片选择器（同时支持视频和音频）。
-该插件基于 [photo_manager][photo_manager pub] 实现资源相关功能，
-[extended_image][extended_image pub] 用于查看图片，
-[provider][provider pub] 用于协助管理选择器的状态。
+基于 **微信 UI** 的 Flutter **图片选择器（同时支持视频和音频）**。
 
 当前的界面设计基于的微信版本：**8.3.x**
 界面更新将在微信版本更新后随时进行跟进。
@@ -32,18 +29,51 @@ Language: [English](README.md) | 中文
 
 查看 [迁移指南][] 了解如何从破坏性改动中迁移为可用代码。
 
+## 版本兼容
+
+该插件仅保证能与 **stable 渠道的 Flutter SDK** 配合使用。
+我们不会为其他渠道的 Flutter SDK 做实时支持。
+
+|        | 3.0 | 3.3 | 3.7 | 3.10 | 3.13 | 3.16 |
+|--------|:---:|:---:|:---:|:----:|:----:|:----:|
+| 8.9.0+ |  ❌  |  ❌  |  ❌  |  ❌   |  ❌   |  ✅   |
+| 8.7.0+ |  ❌  |  ❌  |  ❌  |  ❌   |  ✅   |  ❌   |
+| 8.5.0+ |  ❌  |  ❌  |  ❌  |  ✅   |  ❌   |  ❌   |
+| 8.4.0+ |  ❌  |  ❌  |  ✅  |  ❌   |  ❌   |  ❌   |
+| 8.0.0+ |  ✅  |  ✅  |  ❌  |  ❌   |  ❌   |  ❌   |
+| 7.3.0+ |  ✅  |  ✅  |  ❌  |  ❌   |  ❌   |  ❌   |
+
+如果在 `flutter pub get` 时遇到了 `resolve conflict` 失败问题，
+请使用 `dependency_overrides` 解决。
+
+## 主要使用的 package
+
+该插件基于这些优秀的 package 构建：
+
+| Name                                 | Features      |
+|:-------------------------------------|:--------------|
+| [photo_manager][photo_manager pub]   | 资源的基础抽象和管理。   |
+| [extended_image][extended_image pub] | 以熟悉的操作预览所有资源。 |
+| [provider][provider pub]             | 协助选择器管理器内部状态。 |
+| [video_player][video_player pub]     | 播放对应的视频和音频。   |
+
+这些 package 在该插件中的实现已相对稳定。
+如果你在使用中发现于它们相关的问题，
+请先在本插件的问题跟踪中报告相关问题。
+
 <details>
   <summary>目录列表</summary>
 
 <!-- TOC -->
 * [Flutter WeChat Assets Picker](#flutter-wechat-assets-picker)
+  * [版本兼容](#版本兼容)
+  * [主要使用的 package](#主要使用的-package)
   * [特性 ✨](#特性-)
     * [特别提醒 📝](#特别提醒-)
   * [项目展柜 🖼️](#项目展柜-)
   * [截图 📸](#截图-)
   * [开始前的注意事项 ‼️](#开始前的注意事项-)
   * [准备工作 🍭](#准备工作-)
-    * [版本兼容](#版本兼容)
     * [Flutter](#flutter)
     * [Android](#android)
       * [权限](#权限)
@@ -92,7 +122,7 @@ Language: [English](README.md) | 中文
 1. HEIF (HEIC) 图片支持获取和转换，但是它们的显示依托于 Flutter 的图片解析。
    在此 issue 中 [flutter/flutter#20522](https://github.com/flutter/flutter/issues/20522) 有所说明。
    若要用于显示，请使用 `entity.file` 或 `AssetEntityImage` 进行处理。
-2. 由于 iOS 和 macOS 的系统限制，在获取音频时只能获取应用沙盒环境内的音频
+2. 由于 iOS 和 macOS 的系统限制，在获取音频时只能获取应用沙盒环境内的音频。
 
 ## 项目展柜 🖼️
 
@@ -127,22 +157,6 @@ Language: [English](README.md) | 中文
 在你提出任何问题之前，请仔细并完整地查看和使用示例。
 
 ## 准备工作 🍭
-
-### 版本兼容
-
-该插件仅保证能与 **stable 渠道的 Flutter SDK** 配合使用。
-我们不会为其他渠道的 Flutter SDK 做实时支持。
-
-|        | 3.0 | 3.3 | 3.7 | 3.10 | **3.13** |
-|--------|:---:|:---:|:---:|:----:|:--------:|
-| 8.7.0+ |  ❌  |  ❌  |  ❌  |  ❌   |    ✅     |
-| 8.5.0+ |  ❌  |  ❌  |  ❌  |  ✅   |    ❌     |
-| 8.4.0+ |  ❌  |  ❌  |  ✅  |  ❌   |    ❌     |
-| 8.0.0+ |  ✅  |  ✅  |  ❌  |  ❌   |    ❌     |
-| 7.3.0+ |  ✅  |  ✅  |  ❌  |  ❌   |    ❌     |
-
-如果在 `flutter pub get` 时遇到了 `resolve conflict` 失败问题，
-请使用 `dependency_overrides` 解决。
 
 ### Flutter
 
@@ -204,13 +218,9 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
    ```ruby
    platform :ios, '11.0'
    ```
+   如果该行以 `#` (注释) 开头，请把 `#` 删除。
 2. 将以下内容添加至 `Info.plist`。
 ```
-<key>NSAppTransportSecurity</key>
-<dict>
-	<key>NSAllowsArbitraryLoads</key>
-	<true/>
-</dict>
 <key>NSPhotoLibraryUsageDescription</key>
 <string>你的相册权限描述</string>
 ```
@@ -221,6 +231,7 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
    ```Podfile
    platform :osx, '10.15'
    ```
+   如果该行以 `#` (注释) 开头，请把 `#` 删除。
 2. 使用 **Xcode** 打开 `macos/Runner.xcworkspace`。
    接着将 macOS 的最低构建版本提升至 **10.15**。
 3. 与 [iOS](#iOS) 一样，添加相同的内容到 `Info.plist` 里。
@@ -508,6 +519,7 @@ W/Glide   (21133): Failed to find GeneratedAppGlideModule.
 [photo_manager pub]: https://pub.flutter-io.cn/packages/photo_manager
 [extended_image pub]: https://pub.flutter-io.cn/packages/extended_image
 [provider pub]: https://pub.flutter-io.cn/packages/provider
+[video_player pub]: https://pub.flutter-io.cn/packages/video_player
 [wechat_camera_picker pub]: https://pub.flutter-io.cn/packages/wechat_camera_picker
 [迁移指南]: https://github.com/fluttercandies/flutter_wechat_assets_picker/blob/main/guides/migration_guide.md
 [photo_manager API 文档]: https://pub.flutter-io.cn/documentation/photo_manager/latest/
