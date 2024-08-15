@@ -7,30 +7,93 @@ that can be found in the LICENSE file. -->
 > [!IMPORTANT]  
 > See the [Migration Guide](guides/migration_guide.md) for the details of breaking changes between versions.
 
-## 9.0.0-dev.2
+## Unreleased
+
+*None.*
+
+## 9.2.0
+
+### New features
+
+- Introduce `AssetsChangeCallback` and `AssetsChangeRefreshPredicate`
+  to help users act according to assets changes.
+- Add `shouldAutoplayPreview` in the config.
 
 ### Fixes
 
-- Fix unhandled child semantics with the app bar title.
-- Fix styles around the app bar and other widgets.
+- Raise detailed negative range error.
+- Fix viewer confirm button predication.
+- Enlarge GIF gradients.
+- Fix potential paths assets count unexpected merging behaviors.
 
-## 9.0.0-dev.1
-
-### Breaking changes
-
-- Integrate `PermissionRequestOption` for callers.
+## 9.1.0
 
 ### Improvements
 
-- Adapt `ThemeData` usages.
+- Support limited permission displays on Android.
+- Improves the limited overlay padding on Android.
+- Adds permission request lock for the picker state.
+- Speeding up by splitting asset loading into separate steps.
+- Speeding up using `AdvancedCustomFilter` rather than `FilterOptionGroup` by default.
 
-## 8.9.0-dev.1
+### Fixes
+
+- Fix reverted index when previewing assets on Android.
+- Requests with the correct options with the picker.
+
+## 9.0.4
+
+### Fixes
+
+- Fix the app bar of the viewer that is not animating.
+- Fix loading when no assets are in the path.
+- Reset the has more to load flag between path switching.
+
+## 9.0.3
+
+### Fixes
+
+- Fix index reverting in `viewAsset`.
+
+## 9.0.2
+
+### Fixes
+
+- Fix the index with bottom items in the preview.
+
+## 9.0.1
+
+### Fixes
+
+- Fix the current asset in the picker viewer.
+
+### Improvements
+
+- Improve code formatting. 
+
+## 9.0.0
 
 ### Breaking changes
 
 - Migrate to Flutter 3.16, and drop supports for previous Flutter versions.
 - Bump `photo_manager` to v3.x.
 - Export `photo_manager_image_provider`.
+- Integrate `PermissionRequestOption` for callers.
+
+### Improvements
+
+- Adapt `ThemeData` usages.
+- Use `wechat_picker_library`.
+- Make the first asset count not blocking loads.
+
+### Fixes
+
+- Fix unhandled child semantics with the app bar title.
+- Fix styles around the app bar and other widgets.
+- Fix previewing selected assets' behavior.
+- Use `PermissionRequestOption` as much as possible.
+- Raise more errors for non-synced paths.
+- Fix the experience with `shouldRevertGrid`.
 
 ## 8.8.0
 

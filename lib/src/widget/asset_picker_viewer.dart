@@ -43,7 +43,11 @@ class AssetPickerViewer<Asset, Path> extends StatefulWidget {
     AssetSelectPredicate<AssetEntity>? selectPredicate,
     PermissionRequestOption permissionRequestOption =
         const PermissionRequestOption(),
+    bool shouldAutoplayPreview = false,
   }) async {
+    if (previewAssets.isEmpty) {
+      throw StateError('Previewing empty assets is not allowed.');
+    }
     await AssetPicker.permissionCheck(requestOption: permissionRequestOption);
     final Widget viewer = AssetPickerViewer<AssetEntity, AssetPathEntity>(
       builder: DefaultAssetPickerViewerBuilderDelegate(
@@ -65,6 +69,7 @@ class AssetPickerViewer<Asset, Path> extends StatefulWidget {
         maxAssets: maxAssets,
         shouldReversePreview: shouldReversePreview,
         selectPredicate: selectPredicate,
+        shouldAutoplayPreview: shouldAutoplayPreview,
       ),
     );
     final PageRouteBuilder<List<AssetEntity>> pageRoute =
@@ -75,7 +80,7 @@ class AssetPickerViewer<Asset, Path> extends StatefulWidget {
       },
     );
     final List<AssetEntity>? result =
-        await Navigator.of(context).push<List<AssetEntity>>(pageRoute);
+        await Navigator.maybeOf(context)?.push<List<AssetEntity>>(pageRoute);
     return result;
   }
 
@@ -95,9 +100,8 @@ class AssetPickerViewer<Asset, Path> extends StatefulWidget {
         return FadeTransition(opacity: animation, child: child);
       },
     );
-    final List<A>? result = await Navigator.of(context).push<List<A>>(
-      pageRoute,
-    );
+    final List<A>? result =
+        await Navigator.maybeOf(context)?.push<List<A>>(pageRoute);
     return result;
   }
 }

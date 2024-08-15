@@ -12,13 +12,13 @@ import 'package:flutter/services.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:wechat_picker_library/wechat_picker_library.dart';
 
 import '../constants/custom_scroll_physics.dart';
 import '../constants/enums.dart';
-import '../constants/extensions.dart';
 import '../constants/typedefs.dart';
 import '../delegates/asset_picker_text_delegate.dart';
-import '../internal/singleton.dart';
+import '../internals/singleton.dart';
 import '../provider/asset_picker_provider.dart';
 import '../provider/asset_picker_viewer_provider.dart';
 import '../widget/asset_picker_app_bar.dart';
@@ -26,9 +26,7 @@ import '../widget/asset_picker_viewer.dart';
 import '../widget/builder/audio_page_builder.dart';
 import '../widget/builder/fade_image_builder.dart';
 import '../widget/builder/image_page_builder.dart';
-import '../widget/builder/value_listenable_builder_2.dart';
 import '../widget/builder/video_page_builder.dart';
-import '../widget/scale_text.dart';
 
 abstract class AssetPickerViewerBuilderDelegate<Asset, Path> {
   AssetPickerViewerBuilderDelegate({
@@ -41,8 +39,9 @@ abstract class AssetPickerViewerBuilderDelegate<Asset, Path> {
     this.maxAssets,
     this.shouldReversePreview = false,
     this.selectPredicate,
-  })  : assert(maxAssets == null || maxAssets > 0),
-        assert(currentIndex >= 0);
+  })  : assert(previewAssets.isNotEmpty),
+        assert(currentIndex >= 0),
+        assert(maxAssets == null || maxAssets > 0);
 
   /// [ChangeNotifier] for photo selector viewer.
   /// 资源预览器的状态保持
@@ -134,7 +133,11 @@ abstract class AssetPickerViewerBuilderDelegate<Asset, Path> {
 
   /// Getter for the current asset.
   /// 当前资源的Getter
-  Asset get currentAsset => previewAssets.elementAt(currentIndex);
+  Asset get currentAsset => previewAssets.elementAt(
+        shouldReversePreview
+            ? previewAssets.length - currentIndex - 1
+            : currentIndex,
+      );
 
   /// Height for bottom preview widget.
   /// 底栏预览部件的高度
@@ -309,7 +312,10 @@ abstract class AssetPickerViewerBuilderDelegate<Asset, Path> {
 
   /// Sync selected assets currently with asset picker provider.
   /// 在预览中当前已选的图片同步到选择器的状态
-  @Deprecated('The method is not used by the package anymore')
+  @Deprecated(
+    'No longer used by the package. '
+    'This will be removed in 10.0.0',
+  )
   Future<bool> syncSelectedAssetsWhenPop() async {
     if (provider?.currentlySelectedAssets != null) {
       selectorProvider?.selectedAssets = provider!.currentlySelectedAssets;
@@ -385,7 +391,12 @@ class DefaultAssetPickerViewerBuilderDelegate
     super.maxAssets,
     super.shouldReversePreview,
     super.selectPredicate,
+    this.shouldAutoplayPreview = false,
   });
+
+  /// Whether the preview should auto play.
+  /// 预览是否自动播放
+  final bool shouldAutoplayPreview;
 
   /// Thumb size for the preview of images in the viewer.
   /// 预览时图片的缩略图大小
@@ -412,18 +423,25 @@ class DefaultAssetPickerViewerBuilderDelegate
 
   @override
   Widget assetPageBuilder(BuildContext context, int index) {
-    final AssetEntity asset = previewAssets.elementAt(index);
+    final AssetEntity asset = previewAssets.elementAt(
+      shouldReversePreview ? previewAssets.length - index - 1 : index,
+    );
     final Widget builder = switch (asset.type) {
-      AssetType.audio => AudioPageBuilder(asset: asset),
+      AssetType.audio => AudioPageBuilder(
+          asset: asset,
+          shouldAutoplayPreview: shouldAutoplayPreview,
+        ),
       AssetType.image => ImagePageBuilder(
           asset: asset,
           delegate: this,
           previewThumbnailSize: previewThumbnailSize,
+          shouldAutoplayPreview: shouldAutoplayPreview,
         ),
       AssetType.video => VideoPageBuilder(
           asset: asset,
           delegate: this,
           hasOnlyOneVideoAndMoment: isWeChatMoment && hasVideo,
+          shouldAutoplayPreview: shouldAutoplayPreview,
         ),
       AssetType.other => Center(
           child: ScaleText(
@@ -515,7 +533,9 @@ class DefaultAssetPickerViewerBuilderDelegate
       child: Semantics(
         sortKey: ordinalSortKey(0),
         child: IconButton(
-          onPressed: Navigator.of(context).maybePop,
+          onPressed: () {
+            Navigator.maybeOf(context)?.maybePop();
+          },
           padding: EdgeInsets.zero,
           constraints: BoxConstraints.tight(const Size.square(28)),
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
@@ -542,15 +562,14 @@ class DefaultAssetPickerViewerBuilderDelegate
       themeData.bottomAppBarTheme.color!.opacity *
           (isAppleOS(context) ? .9 : 1),
     );
-    return ValueListenableBuilder2<bool, int>(
-      firstNotifier: isDisplayingDetail,
-      secondNotifier: selectedNotifier,
-      builder: (_, bool v, __, Widget? child) => AnimatedPositionedDirectional(
+    return ValueListenableBuilder(
+      valueListenable: isDisplayingDetail,
+      builder: (_, v, child) => AnimatedPositionedDirectional(
         duration: kThemeAnimationDuration,
         curve: Curves.easeInOut,
-        bottom: v ? 0 : -(context.bottomPadding + bottomDetailHeight),
-        start: 0,
-        end: 0,
+        bottom: v ? 0.0 : -(context.bottomPadding + bottomDetailHeight),
+        start: 0.0,
+        end: 0.0,
         height: context.bottomPadding + bottomDetailHeight,
         child: child!,
       ),
@@ -604,11 +623,14 @@ class DefaultAssetPickerViewerBuilderDelegate
     const double padding = 8.0;
 
     void onTap(AssetEntity asset) {
-      final int page;
+      int page;
       if (previewAssets != selectedAssets) {
         page = previewAssets.indexOf(asset);
       } else {
         page = index;
+      }
+      if (shouldReversePreview) {
+        page = previewAssets.length - page - 1;
       }
       if (pageController.page == page.toDouble()) {
         return;
@@ -636,7 +658,10 @@ class DefaultAssetPickerViewerBuilderDelegate
           stream: pageStreamController.stream,
           builder: (_, AsyncSnapshot<int> snapshot) {
             final AssetEntity asset = selectedAssets!.elementAt(index);
-            final bool isViewing = previewAssets[snapshot.data!] == asset;
+            final viewingIndex = shouldReversePreview
+                ? previewAssets.length - snapshot.data! - 1
+                : snapshot.data!;
+            final bool isViewing = previewAssets[viewingIndex] == asset;
             final Widget item = switch (asset.type) {
               AssetType.image => _imagePreviewItem(asset),
               AssetType.video => _videoPreviewItem(asset),
@@ -647,11 +672,15 @@ class DefaultAssetPickerViewerBuilderDelegate
               label: '${semanticsTextDelegate.semanticTypeLabel(asset.type)}'
                   '${index + 1}',
               selected: isViewing,
-              onTap: () => onTap(asset),
+              onTap: () {
+                onTap(asset);
+              },
               onTapHint: semanticsTextDelegate.sActionPreviewHint,
               excludeSemantics: true,
               child: GestureDetector(
-                onTap: () => onTap(asset),
+                onTap: () {
+                  onTap(asset);
+                },
                 child: Selector<AssetPickerViewerProvider<AssetEntity>?,
                     List<AssetEntity>?>(
                   selector: (_, AssetPickerViewerProvider<AssetEntity>? p) =>
@@ -698,11 +727,13 @@ class DefaultAssetPickerViewerBuilderDelegate
   /// AppBar widget.
   /// 顶栏部件
   Widget appBar(BuildContext context) {
-    return AssetPickerAppBar(
+    final bar = AssetPickerAppBar(
       leading: Semantics(
         sortKey: ordinalSortKey(0),
         child: IconButton(
-          onPressed: Navigator.of(context).maybePop,
+          onPressed: () {
+            Navigator.maybeOf(context)?.maybePop();
+          },
           tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
           icon: Icon(
             Icons.close,
@@ -736,6 +767,18 @@ class DefaultAssetPickerViewerBuilderDelegate
         const SizedBox(width: 14),
       ],
     );
+    return ValueListenableBuilder(
+      valueListenable: isDisplayingDetail,
+      builder: (_, v, child) => AnimatedPositionedDirectional(
+        duration: kThemeAnimationDuration,
+        curve: Curves.easeInOut,
+        top: v ? 0.0 : -(context.topPadding + bar.preferredSize.height),
+        start: 0.0,
+        end: 0.0,
+        child: child!,
+      ),
+      child: bar,
+    );
   }
 
   /// It'll pop with [AssetPickerProvider.selectedAssets] when there are
@@ -755,15 +798,15 @@ class DefaultAssetPickerViewerBuilderDelegate
           );
           Future<void> onPressed() async {
             if (isWeChatMoment && hasVideo) {
-              Navigator.of(context).pop(<AssetEntity>[currentAsset]);
+              Navigator.maybeOf(context)?.pop(<AssetEntity>[currentAsset]);
               return;
             }
             if (provider!.isSelectedNotEmpty) {
-              Navigator.of(context).pop(provider.currentlySelectedAssets);
+              Navigator.maybeOf(context)?.pop(provider.currentlySelectedAssets);
               return;
             }
             if (await onChangingSelected(context, currentAsset, false)) {
-              Navigator.of(context).pop(
+              Navigator.maybeOf(context)?.pop(
                 selectedAssets ?? <AssetEntity>[currentAsset],
               );
             }
@@ -780,10 +823,9 @@ class DefaultAssetPickerViewerBuilderDelegate
             return textDelegate.confirm;
           }
 
-          final bool isButtonEnabled = provider == null ||
-              provider.currentlySelectedAssets.isNotEmpty ||
+          final isButtonEnabled = provider == null ||
               previewAssets.isEmpty ||
-              selectedNotifier.value == 0;
+              (selectedAssets?.isNotEmpty ?? false);
           return MaterialButton(
             minWidth:
                 (isWeChatMoment && hasVideo) || provider!.isSelectedNotEmpty
@@ -883,7 +925,24 @@ class DefaultAssetPickerViewerBuilderDelegate
         initialData: currentIndex,
         stream: pageStreamController.stream,
         builder: (_, s) {
-          final AssetEntity asset = previewAssets.elementAt(s.data!);
+          final index = s.data!;
+          final assetIndex =
+              shouldReversePreview ? previewAssets.length - index - 1 : index;
+          if (assetIndex < 0) {
+            throw IndexError.withLength(
+              assetIndex,
+              previewAssets.length,
+              indexable: previewAssets,
+              name: 'selectButton.assetIndex',
+              message: 'previewReversed: $shouldReversePreview\n'
+                  'stream.index: $index\n'
+                  'selectedAssets.length: ${selectedAssets?.length}\n'
+                  'previewAssets.length: ${previewAssets.length}\n'
+                  'currentIndex: $currentIndex\n'
+                  'maxAssets: $maxAssets',
+            );
+          }
+          final asset = previewAssets.elementAt(assetIndex);
           return Selector<AssetPickerViewerProvider<AssetEntity>,
               List<AssetEntity>>(
             selector: (_, p) => p.currentlySelectedAssets,
@@ -892,7 +951,9 @@ class DefaultAssetPickerViewerBuilderDelegate
               return Semantics(
                 selected: isSelected,
                 label: semanticsTextDelegate.select,
-                onTap: () => onChangingSelected(context, asset, isSelected),
+                onTap: () {
+                  onChangingSelected(context, asset, isSelected);
+                },
                 onTapHint: semanticsTextDelegate.select,
                 excludeSemantics: true,
                 child: Row(
@@ -928,7 +989,6 @@ class DefaultAssetPickerViewerBuilderDelegate
         controller: pageController,
         itemCount: previewAssets.length,
         itemBuilder: assetPageBuilder,
-        reverse: shouldReversePreview,
         onPageChanged: (int index) {
           currentIndex = index;
           pageStreamController.add(index);

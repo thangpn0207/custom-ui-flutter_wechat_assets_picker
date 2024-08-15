@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:wechat_picker_library/wechat_picker_library.dart';
 
 import '../constants/config.dart';
 import '../constants/constants.dart';
@@ -65,16 +66,18 @@ class AssetPickerDelegate {
     BuildContext context, {
     Key? key,
     AssetPickerConfig pickerConfig = const AssetPickerConfig(),
+    PermissionRequestOption? permissionRequestOption,
     bool useRootNavigator = true,
     AssetPickerPageRouteBuilder<List<AssetEntity>>? pageRouteBuilder,
   }) async {
-    final PermissionState ps = await permissionCheck(
-      requestOption: PermissionRequestOption(
-        androidPermission: AndroidPermission(
-          type: pickerConfig.requestType,
-          mediaLocation: false,
-        ),
+    permissionRequestOption ??= PermissionRequestOption(
+      androidPermission: AndroidPermission(
+        type: pickerConfig.requestType,
+        mediaLocation: false,
       ),
+    );
+    final PermissionState ps = await permissionCheck(
+      requestOption: permissionRequestOption,
     );
     final AssetPickerPageRoute<List<AssetEntity>> route =
         pageRouteBuilder?.call(const SizedBox.shrink()) ??
@@ -93,31 +96,36 @@ class AssetPickerDelegate {
     );
     final Widget picker = AssetPicker<AssetEntity, AssetPathEntity>(
       key: key,
+      permissionRequestOption: permissionRequestOption,
       builder: DefaultAssetPickerBuilderDelegate(
-          provider: provider,
-          initialPermission: ps,
-          gridCount: pickerConfig.gridCount,
-          pickerTheme: pickerConfig.pickerTheme,
-          gridThumbnailSize: pickerConfig.gridThumbnailSize,
-          previewThumbnailSize: pickerConfig.previewThumbnailSize,
-          specialPickerType: pickerConfig.specialPickerType,
-          specialItemPosition: pickerConfig.specialItemPosition,
-          specialItemBuilder: pickerConfig.specialItemBuilder,
-          loadingIndicatorBuilder: pickerConfig.loadingIndicatorBuilder,
-          selectPredicate: pickerConfig.selectPredicate,
-          shouldRevertGrid: pickerConfig.shouldRevertGrid,
-          limitedPermissionOverlayPredicate:
-              pickerConfig.limitedPermissionOverlayPredicate,
-          pathNameBuilder: pickerConfig.pathNameBuilder,
-          textDelegate: pickerConfig.textDelegate,
-          themeColor: pickerConfig.themeColor,
-          locale: Localizations.maybeLocaleOf(context),
-          onBackHandler: pickerConfig.onHandlerBack),
+        provider: provider,
+        initialPermission: ps,
+        gridCount: pickerConfig.gridCount,
+        pickerTheme: pickerConfig.pickerTheme,
+        gridThumbnailSize: pickerConfig.gridThumbnailSize,
+        previewThumbnailSize: pickerConfig.previewThumbnailSize,
+        specialPickerType: pickerConfig.specialPickerType,
+        specialItemPosition: pickerConfig.specialItemPosition,
+        specialItemBuilder: pickerConfig.specialItemBuilder,
+        loadingIndicatorBuilder: pickerConfig.loadingIndicatorBuilder,
+        selectPredicate: pickerConfig.selectPredicate,
+        shouldRevertGrid: pickerConfig.shouldRevertGrid,
+        limitedPermissionOverlayPredicate:
+            pickerConfig.limitedPermissionOverlayPredicate,
+        pathNameBuilder: pickerConfig.pathNameBuilder,
+        assetsChangeCallback: pickerConfig.assetsChangeCallback,
+        assetsChangeRefreshPredicate: pickerConfig.assetsChangeRefreshPredicate,
+        textDelegate: pickerConfig.textDelegate,
+        themeColor: pickerConfig.themeColor,
+        locale: Localizations.maybeLocaleOf(context),
+        shouldAutoplayPreview: pickerConfig.shouldAutoplayPreview, onBackHandler: pickerConfig.onHandlerBack),
+
+    ),
     );
-    final List<AssetEntity>? result = await Navigator.of(
+    final List<AssetEntity>? result = await Navigator.maybeOf(
       context,
       rootNavigator: useRootNavigator,
-    ).push<List<AssetEntity>>(
+    )?.push<List<AssetEntity>>(
       pageRouteBuilder?.call(picker) ??
           AssetPickerPageRoute<List<AssetEntity>>(builder: (_) => picker),
     );
@@ -154,12 +162,13 @@ class AssetPickerDelegate {
     await permissionCheck(requestOption: permissionRequestOption);
     final Widget picker = AssetPicker<Asset, Path>(
       key: key,
+      permissionRequestOption: permissionRequestOption,
       builder: delegate,
     );
-    final List<Asset>? result = await Navigator.of(
+    final List<Asset>? result = await Navigator.maybeOf(
       context,
       rootNavigator: useRootNavigator,
-    ).push<List<Asset>>(
+    )?.push<List<Asset>>(
       pageRouteBuilder?.call(picker) ??
           AssetPickerPageRoute<List<Asset>>(builder: (_) => picker),
     );

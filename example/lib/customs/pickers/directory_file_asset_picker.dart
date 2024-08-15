@@ -190,7 +190,7 @@ class _DirectoryFileAssetPickerState extends State<DirectoryFileAssetPicker> {
                 },
               );
               final List<File>? result =
-                  await Navigator.of(context).push<List<File>>(pageRoute);
+                  await Navigator.maybeOf(context)?.push<List<File>>(pageRoute);
               if (result != null && result != fileList) {
                 fileList
                   ..clear()
@@ -381,10 +381,11 @@ class FileAssetPickerBuilder
   @override
   Future<void> viewAsset(
     BuildContext context,
-    int index,
-    AssetEntity currentAsset,
+    int? index,
+    File currentAsset,
   ) async {
-    final List<File>? result = await Navigator.of(context).push<List<File>?>(
+    final List<File>? result =
+        await Navigator.maybeOf(context)?.push<List<File>?>(
       PageRouteBuilder<List<File>>(
         pageBuilder: (
           BuildContext context,
@@ -393,7 +394,8 @@ class FileAssetPickerBuilder
         ) {
           return AssetPickerViewer<File, Directory>(
             builder: FileAssetPickerViewerBuilderDelegate(
-              currentIndex: index,
+              currentIndex:
+                  index ?? provider.selectedAssets.indexOf(currentAsset),
               previewAssets: provider.selectedAssets,
               provider: FileAssetPickerViewerProvider(provider.selectedAssets),
               themeData: AssetPicker.themeData(themeColor),
@@ -405,7 +407,7 @@ class FileAssetPickerBuilder
       ),
     );
     if (result != null) {
-      Navigator.of(context).maybePop(result);
+      Navigator.maybeOf(context)?.maybePop(result);
     }
   }
 
@@ -415,7 +417,7 @@ class FileAssetPickerBuilder
     required List<File> previewAssets,
     List<File>? selectedAssets,
     FileAssetPickerProvider? selectorProvider,
-  }) {
+  }) async {
     final Widget viewer = AssetPickerViewer<File, Directory>(
       builder: FileAssetPickerViewerBuilderDelegate(
         currentIndex: index,
@@ -445,7 +447,7 @@ class FileAssetPickerBuilder
         return FadeTransition(opacity: animation, child: child);
       },
     );
-    return Navigator.of(context).push<List<File>?>(pageRoute);
+    return await Navigator.maybeOf(context)?.push<List<File>?>(pageRoute);
   }
 
   @override
@@ -772,7 +774,7 @@ class FileAssetPickerBuilder
             ),
             onPressed: () {
               if (provider.isSelectedNotEmpty) {
-                Navigator.of(context).pop(provider.selectedAssets);
+                Navigator.maybeOf(context)?.pop(provider.selectedAssets);
               }
             },
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -1028,7 +1030,7 @@ class FileAssetPickerBuilder
                     selectorProvider: provider,
                   );
                   if (result != null) {
-                    Navigator.of(context).pop(result);
+                    Navigator.maybeOf(context)?.pop(result);
                   }
                 }
               : null,
@@ -1145,7 +1147,7 @@ class FileAssetPickerBuilder
                 previewAssets: provider.currentAssets,
               );
               if (result != null) {
-                Navigator.of(context).pop(result);
+                Navigator.maybeOf(context)?.pop(result);
               }
             },
             child: AnimatedContainer(
@@ -1188,7 +1190,7 @@ class FileAssetPickerBuilder
               fit: StackFit.expand,
               children: <Widget>[
                 if (isAppleOS(context)) appleOSLayout(c) else androidLayout(c),
-                if (Platform.isIOS) iOSPermissionOverlay(c),
+                permissionOverlay(c),
               ],
             ),
           ),
@@ -1392,7 +1394,7 @@ class FileAssetPickerViewerBuilderDelegate
                     tooltip: MaterialLocalizations.of(
                       context,
                     ).backButtonTooltip,
-                    onPressed: Navigator.of(context).maybePop,
+                    onPressed: Navigator.maybeOf(context)?.maybePop,
                   ),
                 ),
               ),
@@ -1490,7 +1492,8 @@ class FileAssetPickerViewerBuilderDelegate
             ),
             onPressed: () {
               if (provider.isSelectedNotEmpty) {
-                Navigator.of(context).pop(provider.currentlySelectedAssets);
+                Navigator.maybeOf(context)
+                    ?.pop(provider.currentlySelectedAssets);
               }
             },
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

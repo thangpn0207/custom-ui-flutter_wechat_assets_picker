@@ -7,8 +7,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-
-import '../constants/extensions.dart';
+import 'package:wechat_picker_library/wechat_picker_library.dart';
 
 /// A custom app bar.
 /// 自定义的顶栏
@@ -88,8 +87,12 @@ class AssetPickerAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   final Semantics Function(Widget appBar)? semanticsBuilder;
 
-  bool canPop(BuildContext context) =>
-      Navigator.of(context).canPop() && automaticallyImplyLeading;
+  bool canPop(BuildContext context) {
+    if (Navigator.maybeOf(context)?.canPop() ?? false) {
+      return automaticallyImplyLeading;
+    }
+    return false;
+  }
 
   double get _barHeight => height ?? kToolbarHeight;
 

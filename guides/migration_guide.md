@@ -6,8 +6,10 @@ that can be found in the LICENSE file. -->
 
 This document gathered all breaking changes and migrations requirement between major versions.
 
-## Major versions
+## Breaking changes in versions
 
+- [9.2.0](#920)
+- [9.1.0](#910)
 - [9.0.0](#900)
 - [8.6.0](#860)
 - [8.3.0](#830)
@@ -17,9 +19,44 @@ This document gathered all breaking changes and migrations requirement between m
 - [6.0.0](#600)
 - [5.0.0](#500)
 
+## 9.2.0
+
+> [!NOTE]
+> If you didn't extend `AssetPickerBuilderDelegate`
+> to build delegates on your own, you can stop reading.
+
+### Introduces `AssetPickerBuilderDelegate.assetsChangeRefreshPredicate`
+
+The predicate that determine whether assets changes should call refresh
+is now exposed and configurable. Delegates that extends `AssetPickerBuilderDelegate`
+show also inherit that field using `super.assetsChangeRefreshPredicate` or other similar approach.
+
+## 9.1.0
+
+> [!NOTE]
+> If you didn't extend `AssetPickerBuilderDelegate`
+> to build delegates on your own, you can stop reading.
+
+### Deprecates `iOSPermissionOverlay`
+
+Due to the support of the limited permission status on Android,
+the permission overlay will also displays on Android.
+Thus, `iOSPermissionOverlay` is now migrating to `permissionOverlay`.
+
 ## 9.0.0
 
-### Summary
+> [!NOTE]
+> If you didn't extend `AssetPickerDelegate` or `AssetPickerBuilderDelegate`
+> to build delegates on your own, you can stop reading.
+
+### View assets signature change
+
+`AssetPickerBuilderDelegate.viewAsset` has 2 changes:
+- It now uses the generic type of the delegate rather than always `AssetEntity`.
+- The `index` of arguments is now nullable,
+  to indicate the behavior of previewing selected assets only.
+
+### Permission request option integration
 
 `PermissionRequestOption` has been added to
 `AssetPickerDelegate.permissionCheck` and
@@ -28,7 +65,7 @@ Classes that extend `AssetPickerDelegate` and override these methods must migrat
 Delegates that use `AssetPicker.permissionCheck`
 should choose whether to pass the request option.
 
-### Details
+#### Details
 
 Before:
 
@@ -78,6 +115,10 @@ After:
 
 ## 8.6.0
 
+> [!NOTE]
+> If you didn't extend `AssetPickerBuilderDelegate`
+> to build delegates on your own, you can stop reading.
+
 ### Summary
 
 `isAppleOS` in `AssetPickerBuilderDelegate` and `AssetPickerViewerBuilderDelegate`
@@ -98,6 +139,10 @@ bool isAppleOS(BuildContext context);
 ```
 
 ## 8.3.0
+
+> [!NOTE]
+> If you didn't extend `AssetPickerBuilderDelegate`
+> to build delegates on your own, you can stop reading.
 
 ### Summary
 
@@ -129,6 +174,10 @@ void selectAsset(
 
 ## 8.2.0
 
+> [!NOTE]
+> If you didn't extend `AssetPickerBuilderDelegate`
+> to build delegates on your own, you can stop reading.
+
 ### Summary
 
 Delegates that extend `AssetPickerBuilderDelegate` should now implement `viewAsset`.
@@ -150,6 +199,10 @@ The new method is implemented in the `DefaultAssetPickerBuilderDelegate`.
 It's a private method previously which not allow to modify.
 
 ## 8.0.0
+
+> [!NOTE]
+> If you didn't extend `AssetPickerBuilderDelegate`, `AssetPickerProvider`, or `SortPathDelegate`
+> to build delegates on your own, you can stop reading.
 
 ### Summary
 
@@ -191,6 +244,10 @@ void soft(List<PathWrapper<Path>> list) {}
 ```
 
 ## 7.0.0
+
+> [!NOTE]
+> If you didn't extend `AssetPicker`, `AssetPickerDelegate`, `AssetPickerViewer`,
+> or `AssetPickerBuilderDelegate` to build delegates on your own, you can stop reading.
 
 ### Summary
 
@@ -267,8 +324,9 @@ This method no longer requires the `provider` argument, delegate should hold pro
 
 ### Summary
 
-_If you didn't extend `AssetPickerBuilderDelegate` or `AssetTextDelegate` to build delegates on your own,
-you can stop reading._
+> [!NOTE]
+> If you didn't extend `AssetPickerBuilderDelegate` or `AssetTextDelegate`
+> to build delegates on your own, you can stop reading.
 
 - User who extended `AssetPickerBuilderDelegate` needs to update the subclass with the latest changes.
 - `AssetsPickerTextDelegate` is not abstract anymore.
